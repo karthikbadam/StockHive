@@ -21,6 +21,9 @@ var SOM = require('./stock-som.js');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+//stock downloader
+
+
 var app = express();
 
 // view engine setup
