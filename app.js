@@ -18,6 +18,8 @@ var historic = require('historic');
 
 var Stock = require('./stock2.js');
 var SOM = require('./stock-som.js');
+var TEMPORAL_TRAIN = false;
+var SPATIAL_TRAIN = true; 
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -50,8 +52,8 @@ app.engine('html', require('ejs').renderFile);
 //app.use('/', routes);
 //app.use('/users', users);
 
-app.get('/', function(req, res, next) {
-  res.render('index.html', {});
+app.get('/', function (req, res, next) {
+    res.render('index.html', {});
 });
 
 /* listen */
@@ -100,26 +102,34 @@ var csvStream = csv
     })
     .on("end", function () {
 
-        //        
-        //        var p = new Parallel(allStocks,  { evalPath: 'eval.js' });
-        //        p.require(Stock);
-        //
-        //        p.map(function (data) {
-        //
-        //            console.log(data);
-        //            var fs = require('fs');
-        //            var companyName = data;
-        //            var symbol = data;
-        //            var content = fs.readFileSync("data/"+symbol+".csv", 'utf8');
-        //
-        //            Stock({
-        //                company: companyName,
-        //                symbol: symbol
-        //            });
-        //
-        //           return 1;
-        //
-        //        });
+        if (SPATIAL_TRAIN) {
+
+            SOM({
+                symbols: allStocks
+            });
+
+        }
+
+        if (TEMPORAL_TRAIN) {
+            var p = new Parallel(allStocks, {
+                evalPath: 'eval.js'
+            });
+
+            p.require(Stock);
+
+            p.map(function (symbol) {
+
+                var companyName = symbol;
+
+                Stock({
+                    company: companyName,
+                    symbol: symbol
+                });
+
+                return 1;
+
+            });
+        }
     });
 
 app.get('/stockData', function (req, res, next) {
@@ -128,10 +138,10 @@ app.get('/stockData', function (req, res, next) {
     var params = selectedURL.query;
     var stockId = params.stock;
     console.log('Accessing the Data function for ...' + stockId);
-    
+
     res.write(fs.readFileSync("public/data/" + stockId + ".json"));
-    res.end(); 
-        
+    res.end();
+
 });
 
 

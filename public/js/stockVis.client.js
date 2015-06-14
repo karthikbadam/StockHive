@@ -248,7 +248,7 @@ $(document).ready(function () {
                                 id: selectedSymbols.indexOf(stock_id) % 10
                             });
 
-                            document.getElementById(stock_id).style.color = color(selectedSymbols.indexOf(stock_id) % 10);
+//                            document.getElementById(stock_id).style.color = color(selectedSymbols.indexOf(stock_id) % 10);
 
                             document.getElementById(stock_id).style.backgroundColor = "#EEEEEE";
 
